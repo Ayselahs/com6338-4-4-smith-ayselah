@@ -49,46 +49,56 @@ function startGame() {
 
 
 // Keyboard access
-document.body.onkeyup = function(e) {
+document.body.addEventListener('keyup', function(e) {
   var key = e.key.toLowerCase();
   console.log(key);
   if (!/^[a-zA-Z]+$/.test(key)) return;
   // Check if the key pressed is in the wordToGuess
   if (wordToGuess.includes(key) && correctArr.indexOf(key) === -1) {
     correctArr.push(key);
+    wordPick();
   } else if (!wordToGuess.includes(key) && correctArr.indexOf(key)  === -1) {
     incorrectArr.push(key);
+    incorrectLettersEl.textContent = incorrectArr.join(', ');
     remainingGuesses--;
+    remainingGuessesEl.textContent = `${remainingGuesses}`;
   }
   // Check if the user has won or lost
- wordPick();
+ 
 
-  if (displayArr === wordToGuess) {
+  if (displayArr.join('') === wordToGuess) {
     wins++;
-    winEl.textContent = wins;
+    winEl.textContent = `${wins}`;
     previousWordEl.textContent = `${wordToGuess}`;
+    remainingGuesses = 10;
+    remainingGuessesEl.textContent = `${remainingGuesses}`;
+
     startGame();
   }
   if (remainingGuesses === 0) {
     losses++;
-    loseEl.textContent = losses;
+    loseEl.textContent = `${losses}`;
     previousWordEl.textContent = `${wordToGuess}`;
+    remainingGuesses = 10;
+    remainingGuessesEl.textContent = `${remainingGuesses}`;
+
     startGame();
   }
-}
+})
 
 function wordPick() {
-  displayArr = '';
+  displayArr = [];
   for (var i = 0; i < wordToGuess.length; i++) {
-    if (correctArr.indexOf(wordToGuess[i]) > -1) {
-      displayArr += wordToGuess[i];
+    if (correctArr.includes(wordToGuess[i])) {
+      displayArr.push(wordToGuess[i]);
     } else {
-      displayArr += '_';
+      displayArr.push('_');
     }
   }
-  remainingGuessesEl.textContent = `${remainingGuesses}`;
-  incorrectLettersEl.textContent = `${incorrectArr}`;
-  wordToGuessEl.textContent = `${displayArr}`;
+
+  var displayStr = displayArr.join('');
+  wordToGuessEl.textContent = displayStr;
+  incorrectLettersEl.textContent = incorrectArr.join(', ');
 }
 
 
